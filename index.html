@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BI & AI Operating Model – Global Best Practices</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0b0f1a;
+    --paper: #f5f2eb;
+    --teal: #1a7a6e;
+    --teal-light: #24a896;
+    --gold: #c49a3c;
+    --gold-light: #e8c06a;
+    --slate: #2e3650;
+    --mist: #e8e4da;
+    --accent-bi: #1a5f7a;
+    --accent-ai: #6b3a7d;
+    --accent-shared: #1a7a6e;
+    --text-primary: #0b0f1a;
+    --text-secondary: #4a5068;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── Deck Shell ──────────────────────────────────────────── */
+  #deck {
+    width: min(960px, 100vw);
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    box-shadow: 0 40px 120px rgba(0,0,0,.7);
+  }
+
+  /* ── Slide Base ──────────────────────────────────────────── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+    transform: translateX(40px);
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+  }
+  .slide.exit {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  /* ── Decorative Corner Mark ──────────────────────────────── */
+  .corner-mark {
+    position: absolute;
+    top: 0; left: 0;
+    width: 120px; height: 120px;
+    background: var(--teal);
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    opacity: .12;
+  }
+  .corner-mark-br {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 80px; height: 80px;
+    background: var(--gold);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    opacity: .10;
+  }
+
+  /* ── Slide Number ────────────────────────────────────────── */
+  .slide-num {
+    position: absolute;
+    bottom: 18px; right: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: .12em;
+    opacity: .55;
+  }
+
+  /* ── Organisation Tag ────────────────────────────────────── */
+  .org-tag {
+    position: absolute;
+    top: 20px; right: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    opacity: .7;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     SLIDE 1 – Title / Cover
+  ════════════════════════════════════════════════════════════ */
+  #s1 {
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+  }
+  #s1 .bg-geo {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 90% 50%, rgba(26,122,110,.18) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(196,154,60,.12) 0%, transparent 60%);
+  }
+  #s1 .grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  #s1 .left-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: linear-gradient(180deg, var(--teal-light), var(--gold));
+  }
+  #s1 .content {
+    position: relative;
+    padding: 0 64px;
+    z-index: 2;
+    max-width: 680px;
+  }
+  #s1 .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--teal-light);
+    margin-bottom: 24px;
+  }
+  #s1 h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 600;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  #s1 h1 span { color: var(--gold-light); }
+  #s1 .sub {
+    font-size: 15px;
+    color: rgba(255,255,255,.55);
+    line-height: 1.65;
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+  #s1 .pills {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  #s1 .pill {
+    padding: 6px 16px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  #s1 .pill-teal { background: rgba(26,168,150,.15); color: var(--teal-light); border: 1px solid rgba(26,168,150,.3); }
+  #s1 .pill-gold { background: rgba(196,154,60,.15); color: var(--gold-light); border: 1px solid rgba(196,154,60,.3); }
+  #s1 .pill-slate { background: rgba(255,255,255,.06); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.1); }
+  #s1 .right-visual {
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 320px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1;
+  }
+  .venn {
+    position: relative;
+    width: 220px; height: 220px;
+  }
+  .venn-circle {
+    position: absolute;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .vc-bi {
+    top: 16px; left: 10px;
+    background: rgba(26,95,122,.28);
+    border: 1.5px solid rgba(26,95,122,.55);
+    color: #7ec8e3;
+  }
+  .vc-ai {
+    bottom: 16px; right: 10px;
+    background: rgba(107,58,125,.28);
+    border: 1.5px solid rgba(107,58,125,.55);
+    color: #c98fe3;
+  }
+  .vc-overlap {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: rgba(26,122,110,.22);
+    border: 1.5px solid rgba(26,168,150,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 8.5px;
+    color: var(--teal-light);
+    text-align: center;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     SLIDE 2 – Global Best Practice Model
+  ════════════════════════════════════════════════════════════ */
+  #s2 .slide-header {
+    padding: 32px 48px 0;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  #s2 .slide-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.15;
+    max-width: 460px;
+  }
+  #s2 .slide-title span { color: var(--teal); }
+  #s2 .tag-box {
+    background: var(--ink);
+    color: var(--gold-light);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .15em;
+    padding: 6px 14px;
+    text-transform: uppercase;
+  }
+  #s2 .divider {
+    height: 2px;
+    margin: 16px 48px;
+    background: linear-gradient(90deg, var(--teal), var(--gold), transparent);
+  }
+  #s2 .body {
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+  .model-card {
+    background: #fff;
+    border: 1px solid #ddd9ce;
+    border-top: 3px solid var(--card-accent, var(--teal));
+    padding: 18px 16px;
+    border-radius: 2px;
+  }
+  .model-card .mc-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    background: var(--card-bg, rgba(26,122,110,.1));
+    margin-bottom: 10px;
+  }
+  .model-card h4 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .model-card p {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  #s2 .bottom-note {
+    margin: 12px 48px 0;
+    padding: 10px 16px;
+    background: rgba(26,122,110,.07);
+    border-left: 3px solid var(--teal);
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    border-radius: 0 2px 2px 0;
+  }
+  #s2 .bottom-note strong { color: var(--teal); }
+
+  /* ════════════════════════════════════════════════════════════
+     SLIDE 3 – Role Split
+  ════════════════════════════════════════════════════════════ */
+  #s3 {
+    display: flex;
+    flex-direction: column;
+  }
+  #s3 .slide-header {
+    padding: 28px 48px 0;
+  }
+  #s3 .slide-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  #s3 .divider {
+    height: 2px;
+    margin: 14px 48px;
+    background: linear-gradient(90deg, var(--accent-bi), var(--accent-ai), transparent);
+  }
+  #s3 .columns {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    padding: 0 48px;
+    flex: 1;
+  }
+  .col-bi, .col-ai {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .col-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+  }
+  .col-header-bi { background: rgba(26,95,122,.1); border-left: 4px solid var(--accent-bi); }
+  .col-header-ai { background: rgba(107,58,125,.1); border-left: 4px solid var(--accent-ai); }
+  .col-header-icon { font-size: 18px; }
+  .col-header-text { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+  .col-header-bi .col-header-text { color: var(--accent-bi); }
+  .col-header-ai .col-header-text { color: var(--accent-ai); }
+  .role-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 9px 12px;
+    background: #fff;
+    border: 1px solid #e5e1d8;
+    border-radius: 2px;
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+  .role-item .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    margin-top: 4px; flex-shrink: 0;
+  }
+  .dot-bi { background: var(--accent-bi); }
+  .dot-ai { background: var(--accent-ai); }
+  .role-item strong { color: var(--ink); display: block; font-size: 11px; margin-bottom: 2px; }
+  .mid-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 44px;
+  }
+  .mid-line {
+    width: 1px;
+    flex: 1;
+    background: linear-gradient(180deg, transparent, var(--teal), transparent);
+    opacity: .4;
+  }
+  .mid-badge {
+    writing-mode: vertical-rl;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    white-space: nowrap;
+  }
+  #s3 .shared-strip {
+    margin: 10px 48px 0;
+    padding: 9px 16px;
+    background: rgba(26,122,110,.06);
+    border: 1px dashed rgba(26,122,110,.3);
+    border-radius: 2px;
+    display: flex; align-items: center; gap: 24px;
+    flex-wrap: wrap;
+  }
+  .shared-strip-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--teal);
+    white-space: nowrap;
+  }
+  .shared-item {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .shared-item::before {
+    content: '';
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--teal-light);
+    display: inline-block;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     SLIDE 4 – Domain Role Split Table
+  ════════════════════════════════════════════════════════════ */
+  #s4 {
+    display: flex; flex-direction: column;
+  }
+  #s4 .slide-header {
+    padding: 28px 48px 0;
+  }
+  #s4 .slide-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  #s4 .divider {
+    height: 2px;
+    margin: 14px 48px;
+    background: linear-gradient(90deg, var(--gold), var(--teal), transparent);
+  }
+  #s4 .table-wrap {
+    padding: 0 48px;
+    flex: 1;
+    overflow: hidden;
+  }
+  .domain-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+  }
+  .domain-table thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-bottom: 2px solid var(--mist);
+  }
+  .th-domain { color: var(--ink); width: 20%; }
+  .th-bi { color: var(--accent-bi); background: rgba(26,95,122,.04); width: 32%; }
+  .th-ai { color: var(--accent-ai); background: rgba(107,58,125,.04); width: 32%; }
+  .th-shared { color: var(--teal); width: 16%; }
+  .domain-table tbody tr {
+    border-bottom: 1px solid #ede9df;
+    transition: background .15s;
+  }
+  .domain-table tbody tr:hover { background: rgba(26,122,110,.03); }
+  .domain-table td {
+    padding: 9px 14px;
+    vertical-align: top;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .td-domain {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 11px;
+  }
+  .td-bi { background: rgba(26,95,122,.02); }
+  .td-ai { background: rgba(107,58,125,.02); }
+  .td-shared { font-style: italic; font-size: 10.5px; color: var(--teal); }
+  .domain-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    font-weight: 500;
+  }
+  .badge-bi { background: rgba(26,95,122,.1); color: var(--accent-bi); }
+  .badge-ai { background: rgba(107,58,125,.1); color: var(--accent-ai); }
+  #s4 .legend {
+    display: flex; gap: 20px;
+    padding: 8px 48px 0;
+    align-items: center;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10.5px;
+    color: var(--text-secondary);
+  }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ════════════════════════════════════════════════════════════
+     SLIDE 5 – Visual Operating Model
+  ════════════════════════════════════════════════════════════ */
+  #s5 {
+    display: flex; flex-direction: column;
+    background: var(--ink);
+  }
+  #s5 .slide-header {
+    padding: 26px 48px 0;
+  }
+  #s5 .slide-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff;
+  }
+  #s5 .slide-title span { color: var(--gold-light); }
+  #s5 .divider {
+    height: 1px;
+    margin: 14px 48px;
+    background: linear-gradient(90deg, rgba(255,255,255,.2), transparent);
+  }
+  #s5 .om-wrap {
+    flex: 1;
+    padding: 0 48px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+  }
+  /* Layers */
+  .om-layer {
+    display: grid;
+    gap: 8px;
+    border-radius: 3px;
+  }
+  .layer-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.35);
+    margin-bottom: 4px;
+  }
+  /* Top layer: BI + AI boxes */
+  .units-row {
+    display: grid;
+    grid-template-columns: 1fr 64px 1fr;
+    gap: 0;
+  }
+  .unit-box {
+    padding: 12px 16px;
+    border-radius: 3px;
+  }
+  .ub-bi {
+    background: rgba(26,95,122,.22);
+    border: 1px solid rgba(26,95,122,.5);
+  }
+  .ub-ai {
+    background: rgba(107,58,125,.22);
+    border: 1px solid rgba(107,58,125,.5);
+  }
+  .unit-box h4 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 6px;
+  }
+  .ub-bi h4 { color: #7ec8e3; }
+  .ub-ai h4 { color: #c98fe3; }
+  .unit-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .unit-box ul li {
+    font-size: 10.5px;
+    color: rgba(255,255,255,.6);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .unit-box ul li::before {
+    content: '›';
+    font-weight: 700;
+    opacity: .6;
+  }
+  .bridge-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  .bridge-arrow {
+    display: flex; align-items: center; gap: 3px;
+    font-size: 16px;
+    color: var(--teal-light);
+    opacity: .8;
+  }
+  .bridge-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--teal-light);
+    text-align: center;
+    opacity: .7;
+  }
+  /* Collaboration bridges */
+  .collab-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .collab-box {
+    background: rgba(26,122,110,.1);
+    border: 1px solid rgba(26,122,110,.25);
+    border-radius: 3px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .collab-box .cb-icon { font-size: 16px; margin-bottom: 4px; }
+  .collab-box h5 {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--teal-light);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 4px;
+  }
+  .collab-box p {
+    font-size: 10px;
+    color: rgba(255,255,255,.45);
+    line-height: 1.4;
+  }
+  /* Governance layer */
+  .gov-row {
+    background: rgba(196,154,60,.07);
+    border: 1px solid rgba(196,154,60,.2);
+    border-radius: 3px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .gov-row .gr-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    white-space: nowrap;
+  }
+  .gov-row .gr-items {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .gr-item {
+    font-size: 10.5px;
+    color: rgba(255,255,255,.5);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .gr-item::before {
+    content: '';
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--gold);
+    display: inline-block;
+  }
+
+  /* ── Navigation Bar ──────────────────────────────────────── */
+  #nav {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-top: 20px;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    color: rgba(255,255,255,.7);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    padding: 8px 22px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    border-radius: 2px;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
+  .nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .nav-dots {
+    display: flex; gap: 8px;
+    padding: 0 20px;
+  }
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    cursor: pointer;
+    transition: background .25s, transform .25s;
+  }
+  .nav-dot.active {
+    background: var(--teal-light);
+    transform: scale(1.4);
+  }
+
+  /* ── Keyboard hint ───────────────────────────────────────── */
+  #hint {
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,.2);
+    letter-spacing: .1em;
+  }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- ══ SLIDE 1 ══════════════════════════════════════════════ -->
+  <section class="slide active" id="s1">
+    <div class="bg-geo"></div>
+    <div class="grid-lines"></div>
+    <div class="left-bar"></div>
+    <div class="content">
+      <div class="eyebrow">Digital Transformation · Governance Series</div>
+      <h1>BI & <span>AI Units</span>:<br>A Complementary<br>Operating Model</h1>
+      <p class="sub">
+        Global best practices for structuring Business Intelligence &amp; Data Analytics Centers
+        alongside AI Units — clarifying roles, boundaries, and collaboration touchpoints.
+      </p>
+      <div class="pills">
+        <span class="pill pill-teal">5 Slides</span>
+        <span class="pill pill-gold">Role Clarity</span>
+        <span class="pill pill-slate">Discussion Draft · 2026</span>
+      </div>
+    </div>
+    <div class="right-visual">
+      <div class="venn">
+        <div class="venn-circle vc-bi">BI &amp;<br>Analytics</div>
+        <div class="venn-circle vc-ai">AI<br>Unit</div>
+        <div class="vc-overlap">Shared<br>Delivery</div>
+      </div>
+    </div>
+    <div class="slide-num">01 / 05</div>
+  </section>
+
+  <!-- ══ SLIDE 2 ══════════════════════════════════════════════ -->
+  <section class="slide" id="s2">
+    <div class="corner-mark"></div>
+    <div class="corner-mark-br"></div>
+    <div class="slide-header">
+      <div class="slide-title">Global Best Practice<br><span>Operating Models</span></div>
+      <div class="tag-box">Slide 02</div>
+    </div>
+    <div class="divider"></div>
+    <div class="body">
+      <div class="model-card" style="--card-accent:#1a5f7a;--card-bg:rgba(26,95,122,.08)">
+        <div class="mc-icon">🏛️</div>
+        <h4>Federated Hub &amp; Spoke</h4>
+        <p>Central BI/AI governance with domain-embedded analytics teams. Adopted by Gartner-rated government entities (UAE TDRA, Saudi NDA, UK GDS). Prevents duplication; preserves domain autonomy.</p>
+      </div>
+      <div class="model-card" style="--card-accent:#6b3a7d;--card-bg:rgba(107,58,125,.08)">
+        <div class="mc-icon">🧩</div>
+        <h4>Centre of Excellence (CoE)</h4>
+        <p>Dedicated AI CoE sets standards, platforms, and frameworks. BI Centers focus on analytics delivery. Model used by McKinsey &amp; Deloitte client frameworks and OECD digital government guidance.</p>
+      </div>
+      <div class="model-card" style="--card-accent:#1a7a6e;--card-bg:rgba(26,122,110,.08)">
+        <div class="mc-icon">⚙️</div>
+        <h4>Platform-Led Model</h4>
+        <p>AI Unit owns the technology layer (LLMOps, MLOps, platforms). BI Center consumes services for analytics products. Emerging trend in large-scale digital transformation programs (Singapore, KSA).</p>
+      </div>
+      <div class="model-card" style="--card-accent:#c49a3c;--card-bg:rgba(196,154,60,.08)">
+        <div class="mc-icon">📊</div>
+        <h4>Data-First Backbone</h4>
+        <p>BI Center owns the data layer (governance, quality, master data). AI Unit builds on this foundation. Recommended by MIT CDOIQ and World Economic Forum data governance frameworks.</p>
+      </div>
+      <div class="model-card" style="--card-accent:#2e3650;--card-bg:rgba(46,54,80,.06)">
+        <div class="mc-icon">🤝</div>
+        <h4>Joint Delivery Model</h4>
+        <p>Shared delivery squads for AI-powered analytics products. Combines BI data expertise with AI engineering. Reduces silos through embedded cross-functional product teams.</p>
+      </div>
+      <div class="model-card" style="--card-accent:#1a7a6e;--card-bg:rgba(26,122,110,.08)">
+        <div class="mc-icon">🔑</div>
+        <h4>Key Principle</h4>
+        <p><strong>Separation of concerns:</strong> BI Center = data &amp; analytics delivery. AI Unit = enablement, governance, and platforms. <em>Collaboration at defined interfaces — not duplication.</em></p>
+      </div>
+    </div>
+    <div class="bottom-note">
+      <strong>Global consensus:</strong> Best-practice organizations assign <strong>data + analytics ownership to BI Centers</strong> and <strong>AI governance + enablement to AI Units</strong>, with clear interfaces at model development, platform usage, and policy adherence.
+    </div>
+    <div class="slide-num">02 / 05</div>
+  </section>
+
+  <!-- ══ SLIDE 3 ══════════════════════════════════════════════ -->
+  <section class="slide" id="s3">
+    <div class="corner-mark"></div>
+    <div class="corner-mark-br"></div>
+    <div class="slide-header">
+      <div class="slide-title">Roles &amp; Responsibilities:<br>BI Center vs. AI Unit</div>
+    </div>
+    <div class="divider"></div>
+    <div class="columns">
+      <div class="col-bi">
+        <div class="col-header col-header-bi">
+          <span class="col-header-icon">📊</span>
+          <span class="col-header-text">BI &amp; Data Analytics Center</span>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-bi"></span>
+          <div><strong>Data Foundation &amp; Quality</strong>Data pipelines, master data management, data quality standards, data catalog ownership</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-bi"></span>
+          <div><strong>Descriptive &amp; Diagnostic Analytics</strong>Dashboards, KPI reporting, trend analysis, operational BI across all entities</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-bi"></span>
+          <div><strong>Advanced Analytics</strong>Predictive models, statistical analysis, forecasting — data-driven, domain-specific models built on clean data</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-bi"></span>
+          <div><strong>Decision Support Systems</strong>Decision intelligence products, executive dashboards, scenario modelling for policy decisions</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-bi"></span>
+          <div><strong>AI Model Development (Data Layer)</strong>Develops ML/AI models grounded in data pipelines; consumes AI platforms provisioned by AI Unit</div>
+        </div>
+      </div>
+
+      <div class="mid-col">
+        <div class="mid-line"></div>
+        <div class="mid-badge">Interface</div>
+        <div class="mid-line"></div>
+      </div>
+
+      <div class="col-ai">
+        <div class="col-header col-header-ai">
+          <span class="col-header-icon">🤖</span>
+          <span class="col-header-text">AI Unit · Digital Transformation</span>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-ai"></span>
+          <div><strong>AI Strategy &amp; Governance</strong>National/entity AI strategy alignment, AI governance frameworks, policy development, ethical AI oversight</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-ai"></span>
+          <div><strong>AI Platforms &amp; Infrastructure</strong>MLOps/LLMOps platforms, AI model registry, GPU/cloud AI infrastructure, shared model APIs</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-ai"></span>
+          <div><strong>Responsible AI &amp; Policy</strong>Fairness, explainability, bias auditing, AI risk assessment, compliance with local &amp; international standards</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-ai"></span>
+          <div><strong>AI Capability Building</strong>AI literacy programs, upskilling, AI community of practice, vendor management for AI tools</div>
+        </div>
+        <div class="role-item">
+          <span class="dot dot-ai"></span>
+          <div><strong>AI Enablement &amp; Use Case Portfolio</strong>Curates and prioritizes AI use cases across the organization; enables — does not solely deliver — solutions</div>
+        </div>
+      </div>
+    </div>
+    <div class="shared-strip">
+      <span class="shared-strip-label">Shared Zone ↔</span>
+      <span class="shared-item">Joint AI Use Case Review</span>
+      <span class="shared-item">Model Governance Committees</span>
+      <span class="shared-item">Data &amp; AI Product Squads</span>
+      <span class="shared-item">Innovation Pilots</span>
+      <span class="shared-item">Reporting to Leadership</span>
+    </div>
+    <div class="slide-num">03 / 05</div>
+  </section>
+
+  <!-- ══ SLIDE 4 ══════════════════════════════════════════════ -->
+  <section class="slide" id="s4">
+    <div class="corner-mark"></div>
+    <div class="corner-mark-br"></div>
+    <div class="slide-header">
+      <div class="slide-title">Domain-Based Role Split</div>
+    </div>
+    <div class="divider"></div>
+    <div class="table-wrap">
+      <table class="domain-table">
+        <thead>
+          <tr>
+            <th class="th-domain">Domain</th>
+            <th class="th-bi">BI &amp; Data Analytics Center</th>
+            <th class="th-ai">AI Unit · Digital Transformation</th>
+            <th class="th-shared">Interface</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-domain">Data Foundation</td>
+            <td class="td-bi"><span class="domain-badge badge-bi">Lead</span><br>Data ingestion, quality, lineage, master data, catalog</td>
+            <td class="td-ai">Defines AI data requirements &amp; quality standards for AI readiness</td>
+            <td class="td-shared">AI readiness assessments</td>
+          </tr>
+          <tr>
+            <td class="td-domain">Analytics &amp; BI</td>
+            <td class="td-bi"><span class="domain-badge badge-bi">Lead</span><br>Dashboards, KPIs, reporting, advanced analytics, forecasting</td>
+            <td class="td-ai">Provides AI-enhanced analytics capabilities (NLP, vision, GenAI)</td>
+            <td class="td-shared">AI-augmented BI products</td>
+          </tr>
+          <tr>
+            <td class="td-domain">AI Model Dev.</td>
+            <td class="td-bi"><span class="domain-badge badge-bi">Deliver</span><br>Builds domain-specific ML models using BI data assets</td>
+            <td class="td-ai"><span class="domain-badge badge-ai">Enable</span><br>Provides platforms, MLOps tooling, model registry, standards</td>
+            <td class="td-shared">Joint model review board</td>
+          </tr>
+          <tr>
+            <td class="td-domain">AI Governance</td>
+            <td class="td-bi">Adheres to AI governance policies; documents data lineage for audits</td>
+            <td class="td-ai"><span class="domain-badge badge-ai">Lead</span><br>Responsible AI policies, ethics, bias review, compliance oversight</td>
+            <td class="td-shared">Model audit sign-offs</td>
+          </tr>
+          <tr>
+            <td class="td-domain">Platforms &amp; Infra</td>
+            <td class="td-bi">Operates BI platforms (data warehouse, visualization tools)</td>
+            <td class="td-ai"><span class="domain-badge badge-ai">Lead</span><br>AI/ML platforms, LLM APIs, cloud AI services, GPU resources</td>
+            <td class="td-shared">Shared platform services</td>
+          </tr>
+          <tr>
+            <td class="td-domain">Capability Building</td>
+            <td class="td-bi">Data literacy, analytics upskilling, BI tool training</td>
+            <td class="td-ai"><span class="domain-badge badge-ai">Lead</span><br>AI literacy, prompt engineering, responsible AI training</td>
+            <td class="td-shared">Joint learning programs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent-bi)"></div>BI Center leads</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent-ai)"></div>AI Unit leads</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Shared / Interface</div>
+    </div>
+    <div class="slide-num">04 / 05</div>
+  </section>
+
+  <!-- ══ SLIDE 5 ══════════════════════════════════════════════ -->
+  <section class="slide" id="s5">
+    <div class="slide-header">
+      <div class="slide-title">Visual <span>Operating Model</span>:<br>How They Work Together</div>
+    </div>
+    <div class="divider"></div>
+    <div class="om-wrap">
+      <div class="layer-label">▸ Core Units</div>
+      <div class="units-row">
+        <div class="unit-box ub-bi">
+          <h4>📊 BI &amp; Data Analytics Center</h4>
+          <ul>
+            <li>Data assets &amp; pipelines</li>
+            <li>Analytics &amp; dashboards</li>
+            <li>ML model development</li>
+            <li>Decision support systems</li>
+          </ul>
+        </div>
+        <div class="bridge-col">
+          <div class="mid-line" style="background:linear-gradient(180deg,transparent,rgba(26,168,150,.5),transparent);width:1px;flex:1"></div>
+          <div class="bridge-arrow">⇄</div>
+          <div class="bridge-label">APIs<br>&amp;<br>Data</div>
+          <div class="mid-line" style="background:linear-gradient(180deg,transparent,rgba(26,168,150,.5),transparent);width:1px;flex:1"></div>
+        </div>
+        <div class="unit-box ub-ai">
+          <h4>🤖 AI Unit · Digital Transformation</h4>
+          <ul>
+            <li>AI platforms &amp; MLOps</li>
+            <li>Responsible AI &amp; governance</li>
+            <li>Capability building</li>
+            <li>AI strategy &amp; policy</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="layer-label" style="margin-top:6px">▸ Collaboration Interfaces</div>
+      <div class="collab-row">
+        <div class="collab-box">
+          <div class="cb-icon">🔬</div>
+          <h5>Joint AI Use Case Board</h5>
+          <p>Co-prioritize, scope, and review AI initiatives. BI brings data; AI Unit brings platforms &amp; governance.</p>
+        </div>
+        <div class="collab-box">
+          <div class="cb-icon">🛡️</div>
+          <h5>Model Review &amp; Audit</h5>
+          <p>BI develops models; AI Unit reviews for compliance, bias, and explainability before deployment.</p>
+        </div>
+        <div class="collab-box">
+          <div class="cb-icon">🚀</div>
+          <h5>Shared Product Squads</h5>
+          <p>Cross-functional teams for high-priority AI products — data engineers, AI engineers, analysts together.</p>
+        </div>
+      </div>
+
+      <div class="layer-label" style="margin-top:6px">▸ Unified Governance Layer</div>
+      <div class="gov-row">
+        <div class="gr-label">🏛️ Shared Governance &amp; Leadership Reporting</div>
+        <div class="gr-items">
+          <span class="gr-item">CDO / Chief Data Officer</span>
+          <span class="gr-item">Data &amp; AI Steering Committee</span>
+          <span class="gr-item">Responsible AI Council</span>
+          <span class="gr-item">Digital Transformation Leadership</span>
+          <span class="gr-item">Joint KPIs &amp; OKRs</span>
+        </div>
+      </div>
+    </div>
+    <div class="slide-num">05 / 05</div>
+  </section>
+
+</div><!-- end #deck -->
+
+<!-- Navigation -->
+<div id="nav">
+  <button class="nav-btn" id="prevBtn" disabled onclick="navigate(-1)">← Prev</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next →</button>
+</div>
+<div id="hint">Press ← → arrow keys to navigate</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsContainer = document.getElementById('dots');
+  let current = 0;
+  let isAnimating = false;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsContainer.appendChild(d);
+  });
+
+  function goTo(idx) {
+    if (isAnimating || idx === current) return;
+    isAnimating = true;
+
+    slides[current].classList.add('exit');
+    slides[current].classList.remove('active');
+
+    setTimeout(() => {
+      slides[current].classList.remove('exit');
+      current = idx;
+      slides[current].classList.add('active');
+
+      // Update dots
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+
+      // Update buttons
+      document.getElementById('prevBtn').disabled = current === 0;
+      document.getElementById('nextBtn').disabled = current === slides.length - 1;
+
+      setTimeout(() => { isAnimating = false; }, 600);
+    }, 280);
+  }
+
+  function navigate(dir) {
+    const next = current + dir;
+    if (next >= 0 && next < slides.length) goTo(next);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+  });
+</script>
+</body>
+</html>
