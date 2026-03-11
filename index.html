@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>BI & AI Operating Model – Global Best Practices</title>
+<title>BI & AI Operating Model – Federated Hub & Spoke</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root {
@@ -17,7 +17,6 @@
     --mist: #e8e4da;
     --accent-bi: #1a5f7a;
     --accent-ai: #6b3a7d;
-    --accent-shared: #1a7a6e;
     --text-primary: #0b0f1a;
     --text-secondary: #4a5068;
   }
@@ -40,13 +39,11 @@
     user-select: none;
   }
 
-  /* ── Outer shell: scales to viewport ── */
   #deck-shell {
     position: relative;
-    /* JS will set width/height to match scaled deck */
+    margin: 0 auto;
   }
 
-  /* ── Fixed internal canvas: always 960×540 ── */
   #deck {
     width: 960px;
     height: 540px;
@@ -55,7 +52,6 @@
     border-radius: 4px;
     box-shadow: 0 40px 120px rgba(0,0,0,.7);
     transform-origin: top left;
-    /* JS sets transform: scale() */
   }
 
   .slide {
@@ -72,86 +68,53 @@
     display: flex;
     flex-direction: column;
   }
-  .slide.active {
-    opacity: 1;
-    pointer-events: all;
-    transform: translateX(0);
-  }
-  .slide.exit {
-    opacity: 0;
-    transform: translateX(-40px);
-  }
+  .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .slide.exit   { opacity: 0; transform: translateX(-40px); }
 
   .corner-mark {
-    position: absolute;
-    top: 0; left: 0;
+    position: absolute; top: 0; left: 0;
     width: 100px; height: 100px;
     background: var(--teal);
     clip-path: polygon(0 0, 100% 0, 0 100%);
-    opacity: .12;
-    pointer-events: none;
+    opacity: .12; pointer-events: none;
   }
   .corner-mark-br {
-    position: absolute;
-    bottom: 0; right: 0;
+    position: absolute; bottom: 0; right: 0;
     width: 70px; height: 70px;
     background: var(--gold);
     clip-path: polygon(100% 0, 100% 100%, 0 100%);
-    opacity: .10;
-    pointer-events: none;
+    opacity: .10; pointer-events: none;
   }
 
   .slide-num {
-    position: absolute;
-    bottom: 7px; right: 18px;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: var(--text-secondary);
-    letter-spacing: .12em;
-    opacity: .55;
+    position: absolute; bottom: 7px; right: 18px;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--text-secondary); letter-spacing: .12em; opacity: .55;
   }
 
-  /* ── Shared header/divider ── */
   .slide-header {
     padding: 16px 38px 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    display: flex; align-items: flex-start; justify-content: space-between;
     flex-shrink: 0;
   }
   .slide-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--ink);
-    line-height: 1.15;
+    font-size: 24px; font-weight: 600; color: var(--ink); line-height: 1.15;
   }
   .slide-title span { color: var(--teal); }
   .divider {
-    height: 2px;
-    margin: 8px 38px;
+    height: 2px; margin: 8px 38px;
     background: linear-gradient(90deg, var(--teal), var(--gold), transparent);
     flex-shrink: 0;
   }
   .tag-box {
-    background: var(--ink);
-    color: var(--gold-light);
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .15em;
-    padding: 4px 11px;
-    text-transform: uppercase;
-    flex-shrink: 0;
+    background: var(--ink); color: var(--gold-light);
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: .15em; padding: 4px 11px; text-transform: uppercase; flex-shrink: 0;
   }
 
-  /* ════════════════════════════════
-     SLIDE 1 – Cover
-  ════════════════════════════════ */
-  #s1 {
-    background: var(--ink);
-    flex-direction: row;
-    align-items: center;
-  }
+  /* ═══ SLIDE 1 – Cover ═══ */
+  #s1 { background: var(--ink); flex-direction: row; align-items: center; }
   #s1 .bg-geo {
     position: absolute; inset: 0;
     background:
@@ -166,221 +129,140 @@
     background-size: 48px 48px;
   }
   #s1 .left-bar {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 5px;
+    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
     background: linear-gradient(180deg, var(--teal-light), var(--gold));
   }
-  #s1 .content {
-    position: relative;
-    padding: 0 52px;
-    z-index: 2;
-    max-width: 600px;
-  }
+  #s1 .content { position: relative; padding: 0 52px; z-index: 2; max-width: 580px; }
   #s1 .eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    color: var(--teal-light);
-    margin-bottom: 16px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: .22em; text-transform: uppercase;
+    color: var(--teal-light); margin-bottom: 16px;
   }
   #s1 h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 42px;
-    font-weight: 600;
-    line-height: 1.1;
-    color: #fff;
-    margin-bottom: 14px;
+    font-family: 'Cormorant Garamond', serif; font-size: 42px;
+    font-weight: 600; line-height: 1.1; color: #fff; margin-bottom: 14px;
   }
   #s1 h1 span { color: var(--gold-light); }
   #s1 .sub {
-    font-size: 12px;
-    color: rgba(255,255,255,.55);
-    line-height: 1.65;
-    max-width: 420px;
-    margin-bottom: 24px;
+    font-size: 12px; color: rgba(255,255,255,.55);
+    line-height: 1.65; max-width: 400px; margin-bottom: 24px;
   }
   #s1 .pills { display: flex; gap: 8px; flex-wrap: wrap; }
   #s1 .pill {
-    padding: 5px 13px;
-    border-radius: 2px;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    padding: 5px 13px; border-radius: 2px;
+    font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
   }
   #s1 .pill-teal  { background: rgba(26,168,150,.15); color: var(--teal-light); border: 1px solid rgba(26,168,150,.3); }
-  #s1 .pill-gold  { background: rgba(196,154,60,.15); color: var(--gold-light); border: 1px solid rgba(196,154,60,.3); }
+  #s1 .pill-gold  { background: rgba(196,154,60,.15);  color: var(--gold-light);  border: 1px solid rgba(196,154,60,.3); }
   #s1 .pill-slate { background: rgba(255,255,255,.06); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.1); }
   #s1 .right-visual {
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 270px;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1;
+    position: absolute; right: 0; top: 0; bottom: 0; width: 300px;
+    display: flex; align-items: center; justify-content: center; z-index: 1;
   }
-  .venn { position: relative; width: 185px; height: 185px; }
-  .venn-circle {
-    position: absolute;
-    width: 116px; height: 116px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    text-align: center;
-  }
-  .vc-bi { top: 14px; left: 8px; background: rgba(26,95,122,.28); border: 1.5px solid rgba(26,95,122,.55); color: #7ec8e3; }
-  .vc-ai { bottom: 14px; right: 8px; background: rgba(107,58,125,.28); border: 1.5px solid rgba(107,58,125,.55); color: #c98fe3; }
-  .vc-overlap {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    background: rgba(26,122,110,.22);
-    border: 1.5px solid rgba(26,168,150,.4);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 7.5px;
-    color: var(--teal-light);
-    text-align: center;
-    line-height: 1.4;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-  }
+  /* Hub & Spoke SVG diagram on cover */
+  .hub-spoke-wrap { position: relative; width: 220px; height: 220px; }
+  .hub-spoke-wrap svg { width: 100%; height: 100%; }
 
-  /* ════════════════════════════════
-     SLIDE 2 – Two Models
-  ════════════════════════════════ */
-  #s2 .body {
-    padding: 0 38px;
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    min-height: 0;
+  /* ═══ SLIDE 2 – Hybrid Model Deep Dive ═══ */
+  #s2 .hs-body {
+    padding: 0 38px; flex: 1; min-height: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow: hidden;
   }
-  .model-card-full {
-    background: #fff;
-    border: 1px solid #ddd9ce;
-    border-radius: 3px;
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    min-height: 0;
+  #s2 .hs-left { display: flex; flex-direction: column; gap: 7px; min-height: 0; overflow: hidden; }
+  #s2 .hs-right { display: flex; flex-direction: column; gap: 7px; min-height: 0; overflow: hidden; }
+
+  .hs-intro {
+    background: #fff; border: 1px solid #ddd9ce; border-top: 3px solid var(--accent-bi);
+    border-radius: 3px; padding: 11px 14px; flex-shrink: 0;
   }
-  .model-card-full.card-hybrid { border-top: 3px solid var(--accent-bi); }
-  .model-card-full.card-coe    { border-top: 3px solid var(--accent-ai); }
-  .mc-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
-  .mc-icon-lg {
-    width: 32px; height: 32px; border-radius: 50%;
+  .hs-intro p { font-size: 10px; color: var(--text-secondary); line-height: 1.55; }
+  .hs-intro strong { color: var(--ink); }
+
+  .hs-pillar {
+    background: #fff; border: 1px solid #ddd9ce; border-radius: 3px;
+    padding: 9px 12px; display: flex; align-items: flex-start; gap: 8px;
+    flex-shrink: 0;
+  }
+  .hs-pillar-icon {
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px; flex-shrink: 0;
+    flex-shrink: 0; font-size: 12px;
   }
-  .mc-icon-hybrid { background: rgba(26,95,122,.1); }
-  .mc-icon-coe    { background: rgba(107,58,125,.1); }
-  .mc-head h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--ink); }
-  .mc-badge {
-    display: inline-block; padding: 2px 7px; border-radius: 2px;
+  .pi-hub  { background: rgba(26,95,122,.12); }
+  .pi-spk  { background: rgba(26,122,110,.12); }
+  .pi-gov  { background: rgba(196,154,60,.12); }
+  .pi-flow { background: rgba(107,58,125,.12); }
+  .pi-cap  { background: rgba(26,168,150,.12); }
+  .pi-fed  { background: rgba(75,120,80,.12); }
+  .hs-pillar-text h5 {
+    font-size: 9.5px; font-weight: 600; color: var(--ink);
+    text-transform: uppercase; letter-spacing: .09em; margin-bottom: 2px;
+  }
+  .hs-pillar-text p { font-size: 9px; color: var(--text-secondary); line-height: 1.45; }
+  .hs-pillar-text p strong { color: var(--teal); }
+
+  #s2 .hs-key {
+    margin: 5px 38px 7px; padding: 6px 13px;
+    background: rgba(26,122,110,.07); border-left: 3px solid var(--teal);
+    font-size: 9.5px; color: var(--text-secondary); line-height: 1.5;
+    border-radius: 0 2px 2px 0; flex-shrink: 0;
+  }
+  #s2 .hs-key strong { color: var(--teal); }
+
+  /* ═══ SLIDE 3 – Institutions ═══ */
+  #s3 { background: var(--paper); }
+  #s3 .inst-body {
+    padding: 0 38px; flex: 1; min-height: 0; display: flex;
+    flex-direction: column; gap: 8px; overflow: hidden;
+  }
+  .inst-section-label {
+    font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--text-secondary); flex-shrink: 0;
+  }
+  .inst-row {
+    display: flex; gap: 8px; flex-shrink: 0;
+  }
+  .inst-card {
+    flex: 1; background: #fff; border: 1px solid #ddd9ce; border-radius: 3px;
+    padding: 8px 10px; display: flex; align-items: center; gap: 9px;
+    min-width: 0;
+  }
+  .inst-logo {
+    width: 34px; height: 34px; border-radius: 4px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; background: #f0ede5;
+  }
+  .inst-logo img {
+    width: 100%; height: 100%; object-fit: contain;
+  }
+  .inst-logo-fallback {
     font-family: 'DM Mono', monospace; font-size: 8px;
-    letter-spacing: .1em; text-transform: uppercase; margin-top: 2px;
+    font-weight: 700; text-align: center; line-height: 1.2;
+    color: var(--ink); padding: 2px;
   }
-  .badge-hybrid { background: rgba(26,95,122,.1); color: var(--accent-bi); }
-  .badge-coe    { background: rgba(107,58,125,.1); color: var(--accent-ai); }
-  .mc-desc { font-size: 10.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px; }
-  .mc-points { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-  .mc-points li {
-    font-size: 10px; color: var(--text-secondary);
-    display: flex; align-items: flex-start; gap: 6px; line-height: 1.4;
+  .inst-info h5 {
+    font-size: 9px; font-weight: 600; color: var(--ink);
+    text-transform: uppercase; letter-spacing: .07em; margin-bottom: 2px;
   }
-  .mc-points li .pt-dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
-  .pt-hybrid { background: var(--accent-bi); }
-  .pt-coe    { background: var(--accent-ai); }
-  #s2 .bottom-note {
-    margin: 6px 38px 8px;
-    padding: 7px 13px;
-    background: rgba(26,122,110,.07);
-    border-left: 3px solid var(--teal);
-    font-size: 10px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    border-radius: 0 2px 2px 0;
-    flex-shrink: 0;
+  .inst-info p { font-size: 8.5px; color: var(--text-secondary); line-height: 1.4; }
+  .inst-badge {
+    font-family: 'DM Mono', monospace; font-size: 7px;
+    padding: 1px 5px; border-radius: 2px; text-transform: uppercase;
+    letter-spacing: .06em; flex-shrink: 0; align-self: flex-start; margin-top: 2px;
   }
-  #s2 .bottom-note strong { color: var(--teal); }
+  .ib-ksa  { background: rgba(0,150,70,.1);   color: #007840; }
+  .ib-glob { background: rgba(26,95,122,.1);  color: var(--accent-bi); }
+  .inst-divider {
+    height: 1px; background: linear-gradient(90deg, var(--teal), var(--gold), transparent);
+    flex-shrink: 0; opacity: .3;
+  }
 
-  /* ════════════════════════════════
-     SLIDE 3 – Compare & Contrast
-  ════════════════════════════════ */
-  #s3 .cc-wrap {
-    padding: 0 38px;
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .cc-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 10.5px;
-    flex-shrink: 1;
-  }
-  .cc-table thead th {
-    padding: 7px 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: .13em;
-    text-transform: uppercase;
-    font-weight: 500;
-    border-bottom: 2px solid var(--mist);
-    text-align: left;
-  }
-  .cc-th-dim { color: var(--ink); width: 18%; }
-  .cc-th-hyb { color: var(--accent-bi); background: rgba(26,95,122,.04); width: 38%; }
-  .cc-th-coe { color: var(--accent-ai); background: rgba(107,58,125,.04); width: 38%; }
-  .cc-table tbody tr { border-bottom: 1px solid #ede9df; }
-  .cc-table tbody tr:hover { background: rgba(26,122,110,.03); }
-  .cc-table td { padding: 6px 12px; vertical-align: top; line-height: 1.45; color: var(--text-secondary); font-size: 10px; }
-  .cc-td-dim { font-weight: 600; color: var(--ink); font-size: 10px; }
-  .cc-td-hyb { background: rgba(26,95,122,.02); }
-  .cc-td-coe { background: rgba(107,58,125,.02); }
-  .cc-rel-row td { background: rgba(26,122,110,.06) !important; border-top: 2px solid rgba(26,122,110,.2); }
-  .cc-rel-row .cc-td-dim { color: var(--teal); }
-  #s3 .cc-note {
-    margin: 5px 0 6px;
-    padding: 6px 13px;
-    background: rgba(26,122,110,.07);
-    border-left: 3px solid var(--teal);
-    font-size: 9.5px;
-    color: var(--text-secondary);
-    border-radius: 0 2px 2px 0;
-    flex-shrink: 0;
-    line-height: 1.45;
-  }
-  #s3 .cc-note strong { color: var(--teal); }
-
-  /* ════════════════════════════════
-     SLIDE 4 – Roles
-  ════════════════════════════════ */
+  /* ═══ SLIDE 4 – Roles ═══ */
   #s4 .columns {
-    display: grid;
-    grid-template-columns: 1fr 46px 1fr;
-    padding: 0 38px;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    gap: 0;
+    display: grid; grid-template-columns: 1fr 46px 1fr;
+    padding: 0 38px; flex: 1; min-height: 0; overflow: hidden; gap: 0;
   }
-  .col-bi, .col-ai {
-    display: flex; flex-direction: column;
-    gap: 4px; overflow: hidden; min-height: 0;
-  }
+  .col-bi, .col-ai { display: flex; flex-direction: column; gap: 4px; overflow: hidden; min-height: 0; }
   .col-header {
     display: flex; align-items: center; gap: 7px;
     padding: 7px 11px; border-radius: 2px; margin-bottom: 3px; flex-shrink: 0;
@@ -393,10 +275,8 @@
   .col-header-ai .col-header-text { color: var(--accent-ai); }
   .role-item {
     display: flex; align-items: flex-start; gap: 6px;
-    padding: 6px 9px;
-    background: #fff; border: 1px solid #e5e1d8; border-radius: 2px;
-    font-size: 9.5px; color: var(--text-secondary); line-height: 1.4;
-    flex-shrink: 0;
+    padding: 6px 9px; background: #fff; border: 1px solid #e5e1d8;
+    border-radius: 2px; font-size: 9.5px; color: var(--text-secondary); line-height: 1.4; flex-shrink: 0;
   }
   .role-item .dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 3px; flex-shrink: 0; }
   .dot-bi { background: var(--accent-bi); }
@@ -404,48 +284,27 @@
   .role-item strong { color: var(--ink); display: block; font-size: 9.5px; margin-bottom: 1px; }
   .mid-col {
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 5px; padding-top: 32px;
+    align-items: center; justify-content: center; gap: 5px; padding-top: 32px;
   }
-  .mid-line {
-    width: 1px; flex: 1;
-    background: linear-gradient(180deg, transparent, var(--teal), transparent);
-    opacity: .4;
-  }
+  .mid-line { width: 1px; flex: 1; background: linear-gradient(180deg, transparent, var(--teal), transparent); opacity: .4; }
   .mid-badge {
-    writing-mode: vertical-rl;
-    font-family: 'DM Mono', monospace;
-    font-size: 7.5px; letter-spacing: .2em;
-    text-transform: uppercase; color: var(--teal); white-space: nowrap;
+    writing-mode: vertical-rl; font-family: 'DM Mono', monospace;
+    font-size: 7.5px; letter-spacing: .2em; text-transform: uppercase; color: var(--teal); white-space: nowrap;
   }
   #s4 .shared-strip {
-    margin: 5px 38px 7px;
-    padding: 6px 12px;
-    background: rgba(26,122,110,.06);
-    border: 1px dashed rgba(26,122,110,.3);
-    border-radius: 2px;
-    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-    flex-shrink: 0;
+    margin: 5px 38px 7px; padding: 6px 12px;
+    background: rgba(26,122,110,.06); border: 1px dashed rgba(26,122,110,.3);
+    border-radius: 2px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex-shrink: 0;
   }
   .shared-strip-label {
     font-family: 'DM Mono', monospace; font-size: 8px;
     text-transform: uppercase; letter-spacing: .14em; color: var(--teal); white-space: nowrap;
   }
   .shared-item { font-size: 9.5px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
-  .shared-item::before {
-    content: ''; width: 4px; height: 4px; border-radius: 50%;
-    background: var(--teal-light); display: inline-block;
-  }
+  .shared-item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--teal-light); display: inline-block; }
 
-  /* ════════════════════════════════
-     SLIDE 5 – Domain Table
-  ════════════════════════════════ */
-  #s5 .table-wrap {
-    padding: 0 38px;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-  }
+  /* ═══ SLIDE 5 – Domain Table ═══ */
+  #s5 .table-wrap { padding: 0 38px; flex: 1; min-height: 0; overflow: hidden; }
   .domain-table { width: 100%; border-collapse: collapse; font-size: 10px; }
   .domain-table thead th {
     padding: 7px 11px; text-align: left; font-size: 8.5px;
@@ -460,8 +319,8 @@
   .domain-table tbody tr:hover { background: rgba(26,122,110,.03); }
   .domain-table td { padding: 6px 11px; vertical-align: top; color: var(--text-secondary); line-height: 1.4; font-size: 9.5px; }
   .td-domain { font-weight: 600; color: var(--ink); font-size: 9.5px; }
-  .td-bi     { background: rgba(26,95,122,.02); }
-  .td-ai     { background: rgba(107,58,125,.02); }
+  .td-bi { background: rgba(26,95,122,.02); }
+  .td-ai { background: rgba(107,58,125,.02); }
   .td-shared { font-style: italic; font-size: 9px; color: var(--teal); }
   .domain-badge {
     display: inline-block; padding: 1px 5px; border-radius: 2px;
@@ -470,34 +329,24 @@
   }
   .badge-bi { background: rgba(26,95,122,.1); color: var(--accent-bi); }
   .badge-ai { background: rgba(107,58,125,.1); color: var(--accent-ai); }
-  #s5 .legend {
-    display: flex; gap: 14px; padding: 5px 38px 7px;
-    align-items: center; flex-shrink: 0;
-  }
+  #s5 .legend { display: flex; gap: 14px; padding: 5px 38px 7px; align-items: center; flex-shrink: 0; }
   .legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px; color: var(--text-secondary); }
   .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
 
-  /* ════════════════════════════════
-     SLIDE 6 – Operating Model
-  ════════════════════════════════ */
+  /* ═══ SLIDE 6 – Visual Operating Model ═══ */
   #s6 { background: var(--ink); }
   #s6 .slide-title { color: #fff; }
   #s6 .slide-title span { color: var(--gold-light); }
   #s6 .divider { background: linear-gradient(90deg, rgba(255,255,255,.2), transparent); height: 1px; }
   #s6 .om-wrap {
-    flex: 1; min-height: 0;
-    padding: 0 38px 6px;
+    flex: 1; min-height: 0; padding: 0 38px 6px;
     display: flex; flex-direction: column; gap: 6px; overflow: hidden;
   }
   .layer-label {
-    font-family: 'DM Mono', monospace; font-size: 8px;
-    letter-spacing: .2em; text-transform: uppercase;
-    color: rgba(255,255,255,.35); flex-shrink: 0;
+    font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .2em;
+    text-transform: uppercase; color: rgba(255,255,255,.35); flex-shrink: 0;
   }
-  .units-row {
-    display: grid; grid-template-columns: 1fr 52px 1fr;
-    flex-shrink: 0;
-  }
+  .units-row { display: grid; grid-template-columns: 1fr 52px 1fr; flex-shrink: 0; }
   .unit-box { padding: 9px 13px; border-radius: 3px; }
   .ub-bi { background: rgba(26,95,122,.22); border: 1px solid rgba(26,95,122,.5); }
   .ub-ai { background: rgba(107,58,125,.22); border: 1px solid rgba(107,58,125,.5); }
@@ -506,50 +355,26 @@
   .ub-ai h4 { color: #c98fe3; }
   .unit-box ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
   .unit-box ul li { font-size: 9px; color: rgba(255,255,255,.6); display: flex; align-items: center; gap: 5px; }
-  .unit-box ul li::before { content: '›'; font-weight: 700; opacity: .6; }
-  .bridge-col {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 2px;
-  }
+  .unit-box ul li::before { content: '>'; font-weight: 700; opacity: .6; }
+  .bridge-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
   .bridge-arrow { font-size: 13px; color: var(--teal-light); opacity: .8; }
-  .bridge-label {
-    font-family: 'DM Mono', monospace; font-size: 7px;
-    letter-spacing: .1em; text-transform: uppercase;
-    color: var(--teal-light); text-align: center; opacity: .7;
-  }
+  .bridge-label { font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .1em; text-transform: uppercase; color: var(--teal-light); text-align: center; opacity: .7; }
   .collab-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; flex-shrink: 0; }
-  .collab-box {
-    background: rgba(26,122,110,.1); border: 1px solid rgba(26,122,110,.25);
-    border-radius: 3px; padding: 7px 9px; text-align: center;
-  }
-  .collab-box .cb-icon { font-size: 13px; margin-bottom: 2px; }
-  .collab-box h5 {
-    font-size: 8.5px; font-weight: 600; color: var(--teal-light);
-    text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px;
-  }
+  .collab-box { background: rgba(26,122,110,.1); border: 1px solid rgba(26,122,110,.25); border-radius: 3px; padding: 7px 9px; text-align: center; }
+  .collab-box h5 { font-size: 8.5px; font-weight: 600; color: var(--teal-light); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px; }
   .collab-box p { font-size: 8.5px; color: rgba(255,255,255,.45); line-height: 1.4; }
   .gov-row {
     background: rgba(196,154,60,.07); border: 1px solid rgba(196,154,60,.2);
     border-radius: 3px; padding: 6px 13px;
     display: flex; align-items: center; gap: 12px; flex-shrink: 0;
   }
-  .gov-row .gr-label {
-    font-family: 'DM Mono', monospace; font-size: 8px;
-    letter-spacing: .15em; text-transform: uppercase;
-    color: var(--gold-light); white-space: nowrap;
-  }
+  .gov-row .gr-label { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--gold-light); white-space: nowrap; }
   .gov-row .gr-items { display: flex; gap: 10px; flex-wrap: wrap; }
   .gr-item { font-size: 9px; color: rgba(255,255,255,.5); display: flex; align-items: center; gap: 4px; }
-  .gr-item::before {
-    content: ''; width: 4px; height: 4px; border-radius: 50%;
-    background: var(--gold); display: inline-block;
-  }
+  .gr-item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); display: inline-block; }
 
   /* ── Navigation ── */
-  #nav {
-    display: flex; align-items: center; gap: 0;
-    margin-top: 14px;
-  }
+  #nav { display: flex; align-items: center; margin-top: 14px; }
   .nav-btn {
     background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
     color: rgba(255,255,255,.7); font-family: 'DM Mono', monospace;
@@ -561,13 +386,15 @@
   .nav-dots { display: flex; gap: 7px; padding: 0 16px; }
   .nav-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(255,255,255,.25); cursor: pointer;
-    transition: background .25s, transform .25s;
+    background: rgba(255,255,255,.25); cursor: pointer; transition: background .25s, transform .25s;
   }
   .nav-dot.active { background: var(--teal-light); transform: scale(1.4); }
-  #hint {
-    margin-top: 7px; font-family: 'DM Mono', monospace;
-    font-size: 9px; color: rgba(255,255,255,.2); letter-spacing: .1em;
+  #hint { margin-top: 7px; font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,.2); letter-spacing: .1em; }
+
+  /* SVG logo boxes for institutions */
+  .logo-svg-box {
+    width: 34px; height: 34px; border-radius: 4px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
   }
 </style>
 </head>
@@ -583,130 +410,262 @@
       <div class="left-bar"></div>
       <div class="content">
         <div class="eyebrow">Digital Transformation · Governance Series</div>
-        <h1>BI & <span>AI Units</span>:<br>A Complementary<br>Operating Model</h1>
+        <h1>The <span>Federated</span><br>Hub &amp; Spoke<br>Operating Model</h1>
         <p class="sub">
-          Global best practices for structuring Business Intelligence &amp; Data Analytics Centers
-          alongside AI Units — clarifying roles, boundaries, and collaboration touchpoints.
+          Global best practices for structuring BI &amp; AI units under a unified, federated governance model — empowering domain teams while maintaining central standards.
         </p>
         <div class="pills">
           <span class="pill pill-teal">6 Slides</span>
-          <span class="pill pill-gold">Role Clarity</span>
+          <span class="pill pill-gold">Governance Design</span>
           <span class="pill pill-slate">Discussion Draft · 2026</span>
         </div>
       </div>
       <div class="right-visual">
-        <div class="venn">
-          <div class="venn-circle vc-bi">BI &amp;<br>Analytics</div>
-          <div class="venn-circle vc-ai">AI<br>Unit</div>
-          <div class="vc-overlap">Shared<br>Delivery</div>
+        <div class="hub-spoke-wrap">
+          <!-- Hub & Spoke SVG diagram -->
+          <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Spokes lines -->
+            <line x1="110" y1="110" x2="110" y2="28"  stroke="rgba(26,168,150,.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="110" y1="110" x2="176" y2="52"  stroke="rgba(26,168,150,.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="110" y1="110" x2="192" y2="130" stroke="rgba(26,168,150,.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="110" y1="110" x2="150" y2="192" stroke="rgba(26,168,150,.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="110" y1="110" x2="68"  y2="192" stroke="rgba(26,168,150,.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="110" y1="110" x2="28"  y2="130" stroke="rgba(26,168,150,.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <line x1="110" y1="110" x2="44"  y2="52"  stroke="rgba(26,168,150,.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <!-- Hub circle -->
+            <circle cx="110" cy="110" r="28" fill="rgba(26,95,122,.35)" stroke="rgba(26,168,150,.7)" stroke-width="1.5"/>
+            <text x="110" y="107" font-family="DM Mono,monospace" font-size="7.5" fill="#7ec8e3" text-anchor="middle" letter-spacing="0.5">DIGITAL</text>
+            <text x="110" y="118" font-family="DM Mono,monospace" font-size="7.5" fill="#7ec8e3" text-anchor="middle" letter-spacing="0.5">TRANSFORM.</text>
+            <!-- Spoke nodes -->
+            <!-- Top -->
+            <circle cx="110" cy="22" r="14" fill="rgba(107,58,125,.3)" stroke="rgba(107,58,125,.6)" stroke-width="1.2"/>
+            <text x="110" y="20" font-family="DM Mono,monospace" font-size="6" fill="#c98fe3" text-anchor="middle">AI</text>
+            <text x="110" y="29" font-family="DM Mono,monospace" font-size="6" fill="#c98fe3" text-anchor="middle">Unit</text>
+            <!-- Top-right -->
+            <circle cx="182" cy="46" r="14" fill="rgba(26,95,122,.25)" stroke="rgba(26,95,122,.55)" stroke-width="1.2"/>
+            <text x="182" y="44" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">BI &amp;</text>
+            <text x="182" y="53" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Analytics</text>
+            <!-- Right -->
+            <circle cx="198" cy="130" r="14" fill="rgba(26,95,122,.25)" stroke="rgba(26,95,122,.55)" stroke-width="1.2"/>
+            <text x="198" y="128" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">IT &amp;</text>
+            <text x="198" y="137" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Infra</text>
+            <!-- Bottom-right -->
+            <circle cx="156" cy="198" r="14" fill="rgba(26,95,122,.25)" stroke="rgba(26,95,122,.55)" stroke-width="1.2"/>
+            <text x="156" y="196" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Policy</text>
+            <text x="156" y="205" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Unit</text>
+            <!-- Bottom-left -->
+            <circle cx="62" cy="198" r="14" fill="rgba(26,95,122,.25)" stroke="rgba(26,95,122,.55)" stroke-width="1.2"/>
+            <text x="62" y="196" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Ops</text>
+            <text x="62" y="205" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Unit</text>
+            <!-- Left -->
+            <circle cx="22" cy="130" r="14" fill="rgba(26,95,122,.25)" stroke="rgba(26,95,122,.55)" stroke-width="1.2"/>
+            <text x="22" y="128" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Finance</text>
+            <text x="22" y="137" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Unit</text>
+            <!-- Top-left -->
+            <circle cx="38" cy="46" r="14" fill="rgba(26,95,122,.25)" stroke="rgba(26,95,122,.55)" stroke-width="1.2"/>
+            <text x="38" y="44" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">HR</text>
+            <text x="38" y="53" font-family="DM Mono,monospace" font-size="6" fill="#7ec8e3" text-anchor="middle">Unit</text>
+          </svg>
         </div>
       </div>
       <div class="slide-num">01 / 06</div>
     </section>
 
-    <!-- ══ SLIDE 2 – Two Models ══ -->
+    <!-- ══ SLIDE 2 – Hybrid Model Deep Dive ══ -->
     <section class="slide" id="s2">
       <div class="corner-mark"></div>
       <div class="corner-mark-br"></div>
       <div class="slide-header">
-        <div class="slide-title">Global Best Practice<br><span>Operating Models</span></div>
+        <div class="slide-title">Federated <span>Hub &amp; Spoke</span>:<br>Model Structure</div>
         <div class="tag-box">Slide 02</div>
       </div>
       <div class="divider"></div>
-      <div class="body">
-        <div class="model-card-full card-hybrid">
-          <div class="mc-head">
-            <div class="mc-icon-lg mc-icon-hybrid">🏛️</div>
-            <div>
-              <h4>Federated Hub &amp; Spoke — Hybrid Model</h4>
-              <span class="mc-badge badge-hybrid">Operational Focus</span>
+      <div class="hs-body">
+        <!-- Left column -->
+        <div class="hs-left">
+          <div class="hs-intro">
+            <p>The <strong>Federated Hub &amp; Spoke model</strong> places a central governance unit (the Hub) at the core of the organisation. Domain-specific units (the Spokes) retain operational autonomy while adhering to standards, platforms, and policies set by the Hub. This structure eliminates duplication, accelerates delivery, and ensures enterprise-wide coherence.</p>
+          </div>
+          <div class="hs-pillar">
+            <div class="hs-pillar-icon pi-hub">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#1a5f7a" stroke-width="1.4"/><circle cx="6.5" cy="6.5" r="2.2" fill="#1a5f7a"/></svg>
+            </div>
+            <div class="hs-pillar-text">
+              <h5>Central Hub — Digital Transformation</h5>
+              <p>Sets AI &amp; data governance frameworks, platforms, and shared services. Acts as the <strong>enabling engine</strong> for all domain units.</p>
             </div>
           </div>
-          <p class="mc-desc">Central BI/AI governance combined with domain-embedded analytics teams. Balances enterprise-wide standards with local agility. Adopted by UAE TDRA, Saudi NDA, and UK GDS among others.</p>
-          <ul class="mc-points">
-            <li><span class="pt-dot pt-hybrid"></span>Central hub sets governance standards; spokes execute locally</li>
-            <li><span class="pt-dot pt-hybrid"></span>Prevents duplication while preserving domain autonomy</li>
-            <li><span class="pt-dot pt-hybrid"></span>Emphasises <strong>how work gets done</strong> across decentralised units</li>
-            <li><span class="pt-dot pt-hybrid"></span>Balances operational efficiency with responsiveness to local needs</li>
-          </ul>
+          <div class="hs-pillar">
+            <div class="hs-pillar-icon pi-spk">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#1a7a6e" stroke-width="1.4" stroke-dasharray="2.5 2"/></svg>
+            </div>
+            <div class="hs-pillar-text">
+              <h5>Domain Spokes — Executing Units</h5>
+              <p>Each business unit retains local analytics &amp; BI capability. Spokes consume platforms &amp; standards from the Hub, <strong>not duplicate them.</strong></p>
+            </div>
+          </div>
+          <div class="hs-pillar">
+            <div class="hs-pillar-icon pi-gov">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1.5" width="10" height="10" rx="2" stroke="#c49a3c" stroke-width="1.4"/><rect x="4" y="4" width="5" height="5" rx="1" fill="#c49a3c" opacity=".5"/></svg>
+            </div>
+            <div class="hs-pillar-text">
+              <h5>Unified Governance Layer</h5>
+              <p>A shared steering committee oversees the entire portfolio. Joint KPIs, data policies, and AI ethics apply <strong>across all spokes equally.</strong></p>
+            </div>
+          </div>
         </div>
-        <div class="model-card-full card-coe">
-          <div class="mc-head">
-            <div class="mc-icon-lg mc-icon-coe">🧩</div>
-            <div>
-              <h4>Centre of Excellence (CoE)</h4>
-              <span class="mc-badge badge-coe">Standardisation Focus</span>
+        <!-- Right column -->
+        <div class="hs-right">
+          <div class="hs-pillar">
+            <div class="hs-pillar-icon pi-flow">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M8 3.5l3 3-3 3" stroke="#6b3a7d" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="hs-pillar-text">
+              <h5>Bidirectional Flow of Value</h5>
+              <p>The Hub provides <strong>platforms, AI tools, and standards</strong> downward. Spokes provide <strong>domain data, use cases, and insights</strong> upward to the Hub.</p>
             </div>
           </div>
-          <p class="mc-desc">Dedicated AI CoE sets standards, platforms, and frameworks. BI Centers focus on analytics delivery. Used by McKinsey &amp; Deloitte client frameworks and OECD digital government guidance.</p>
-          <ul class="mc-points">
-            <li><span class="pt-dot pt-coe"></span>Centralised body of expertise, best practices, and frameworks</li>
-            <li><span class="pt-dot pt-coe"></span>Acts as knowledge hub and governance body for the organisation</li>
-            <li><span class="pt-dot pt-coe"></span>Establishes <strong>what should be done</strong> and ensures consistency</li>
-            <li><span class="pt-dot pt-coe"></span>Drives capability building, compliance, and organisational maturity</li>
-          </ul>
+          <div class="hs-pillar">
+            <div class="hs-pillar-icon pi-cap">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M2 6.5h9" stroke="#24a896" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <div class="hs-pillar-text">
+              <h5>Scalable AI Enablement</h5>
+              <p>The AI function sits <strong>within</strong> the Hub as an enabler — not as an independent silo. It serves all domain spokes through shared APIs, model libraries, and tooling.</p>
+            </div>
+          </div>
+          <div class="hs-pillar">
+            <div class="hs-pillar-icon pi-fed">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="3" cy="6.5" r="2" stroke="#4b7850" stroke-width="1.2"/><circle cx="10" cy="6.5" r="2" stroke="#4b7850" stroke-width="1.2"/><path d="M5 6.5h3" stroke="#4b7850" stroke-width="1.2"/></svg>
+            </div>
+            <div class="hs-pillar-text">
+              <h5>Federated Accountability</h5>
+              <p>Domain units <strong>own their outcomes</strong> while sharing the infrastructure. This prevents bottlenecks and empowers local decision-making within defined guardrails.</p>
+            </div>
+          </div>
+          <div class="hs-pillar">
+            <div class="hs-pillar-icon pi-hub">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 10l4-7 4 7" stroke="#1a5f7a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="hs-pillar-text">
+              <h5>Efficiency Without Duplication</h5>
+              <p>Shared AI platforms, data catalogs, and governance frameworks reduce cost and fragmentation. Every spoke benefits from <strong>enterprise-level capability</strong> without building it independently.</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="bottom-note">
-        <strong>Key insight:</strong> A Hybrid Model may <em>use</em> a CoE as one of its central governance mechanisms — the CoE sets the standards <em>(the "what")</em>, while the Hybrid structure ensures those standards are operationalised across decentralised teams <em>(the "how")</em>.
+      <div class="hs-key">
+        <strong>Core principle:</strong> The Hub governs, enables, and provides. The Spokes execute, deliver, and feed insights back. Together they form a self-reinforcing system that grows stronger as adoption scales.
       </div>
       <div class="slide-num">02 / 06</div>
     </section>
 
-    <!-- ══ SLIDE 3 – Compare & Contrast ══ -->
+    <!-- ══ SLIDE 3 – Institutions ══ -->
     <section class="slide" id="s3">
       <div class="corner-mark"></div>
       <div class="corner-mark-br"></div>
       <div class="slide-header">
-        <div class="slide-title">Compare &amp; Contrast:<br><span>Hybrid Model vs. CoE</span></div>
+        <div class="slide-title">Who Uses This Model:<br><span>Global &amp; KSA Institutions</span></div>
         <div class="tag-box">Slide 03</div>
       </div>
       <div class="divider"></div>
-      <div class="cc-wrap">
-        <table class="cc-table">
-          <thead>
-            <tr>
-              <th class="cc-th-dim">Dimension</th>
-              <th class="cc-th-hyb">🏛️ Hybrid Model</th>
-              <th class="cc-th-coe">🧩 Centre of Excellence (CoE)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="cc-td-dim">Primary Focus</td>
-              <td class="cc-td-hyb">Operational efficiency — balancing central oversight with local execution</td>
-              <td class="cc-td-coe">Standardisation &amp; conformity — embedding best practices across the organisation</td>
-            </tr>
-            <tr>
-              <td class="cc-td-dim">Structure</td>
-              <td class="cc-td-hyb">Hub-and-spoke: central governance hub with semi-autonomous domain spokes</td>
-              <td class="cc-td-coe">Centralised expert body providing guidance, tools, and frameworks to all teams</td>
-            </tr>
-            <tr>
-              <td class="cc-td-dim">Role of Centre</td>
-              <td class="cc-td-hyb">Coordinates and governs; spokes retain delivery responsibility</td>
-              <td class="cc-td-coe">Defines standards, builds capability, and ensures organisational alignment</td>
-            </tr>
-            <tr>
-              <td class="cc-td-dim">Key Output</td>
-              <td class="cc-td-hyb">Agile, locally-relevant analytics and AI solutions delivered at scale</td>
-              <td class="cc-td-coe">Frameworks, policies, reusable platforms, and trained talent pools</td>
-            </tr>
-            <tr>
-              <td class="cc-td-dim">Decision Style</td>
-              <td class="cc-td-hyb">Distributed — local teams decide within central guardrails</td>
-              <td class="cc-td-coe">Centralised — CoE prescribes the approach and monitors adherence</td>
-            </tr>
-            <tr class="cc-rel-row">
-              <td class="cc-td-dim">Relationship</td>
-              <td class="cc-td-hyb" colspan="2" style="font-style:italic;color:var(--teal);font-size:10px;">
-                These are complementary, not competing. The <strong>AI Unit</strong> functions as a CoE (governance, standards, enablement), while the <strong>BI Center</strong> operates as the delivery spoke — together forming a Hybrid Model.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="cc-note">
-          <strong>For this organisation:</strong> The AI Unit embodies CoE principles (standardisation, governance) while the BI Center embodies Hybrid Model principles (operational delivery). Both co-exist within a unified operating framework.
+      <div class="inst-body">
+        <!-- KSA Row -->
+        <div class="inst-section-label">Kingdom of Saudi Arabia</div>
+        <div class="inst-row">
+          <!-- SDAIA -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#004a2f;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#004a2f"/><text x="14" y="11" font-family="DM Mono,monospace" font-size="5.5" fill="#00c060" text-anchor="middle" font-weight="700">SDAIA</text><text x="14" y="19" font-family="DM Mono,monospace" font-size="4" fill="rgba(255,255,255,.5)" text-anchor="middle">Saudi Data &amp;</text><text x="14" y="24" font-family="DM Mono,monospace" font-size="4" fill="rgba(255,255,255,.5)" text-anchor="middle">AI Authority</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>SDAIA</h5>
+              <p>Operates a central AI governance hub with federated data teams across all government entities. Hub sets the National Data Governance Framework; entities execute locally.</p>
+            </div>
+            <div class="inst-badge ib-ksa">KSA</div>
+          </div>
+          <!-- DGA -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#0a2240;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#0a2240"/><text x="14" y="12" font-family="DM Mono,monospace" font-size="6" fill="#4a9edd" text-anchor="middle" font-weight="700">DGA</text><text x="14" y="20" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">Digital Gov.</text><text x="14" y="25" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">Authority</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>Digital Government Authority</h5>
+              <p>Mandates federated digital service delivery across ministries. Central hub provides shared platforms and standards; each ministry retains delivery ownership.</p>
+            </div>
+            <div class="inst-badge ib-ksa">KSA</div>
+          </div>
+          <!-- Saudi Aramco -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#00204e;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#00204e"/><text x="14" y="13" font-family="DM Mono,monospace" font-size="5" fill="#4d9fff" text-anchor="middle" font-weight="700">ARAMCO</text><text x="14" y="21" font-family="DM Mono,monospace" font-size="4" fill="rgba(255,255,255,.45)" text-anchor="middle">Saudi Aramco</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>Saudi Aramco</h5>
+              <p>Deploys a federated AI &amp; data hub within its Digital &amp; Technology organisation. Domain BUs consume shared AI platforms while maintaining local analytics teams.</p>
+            </div>
+            <div class="inst-badge ib-ksa">KSA</div>
+          </div>
+          <!-- NDA -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#1a1a2e;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#1a1a2e"/><text x="14" y="12" font-family="DM Mono,monospace" font-size="7" fill="#e8c06a" text-anchor="middle" font-weight="700">NDA</text><text x="14" y="20" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.45)" text-anchor="middle">National Data</text><text x="14" y="25" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.45)" text-anchor="middle">Management</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>NDA — Nat. Data Mgmt. Office</h5>
+              <p>Provides the central data governance framework for all government entities. Sector ministries are federated spokes using NDA-defined standards and open data policies.</p>
+            </div>
+            <div class="inst-badge ib-ksa">KSA</div>
+          </div>
+        </div>
+        <div class="inst-divider"></div>
+        <!-- Global Row -->
+        <div class="inst-section-label">Global Precedents</div>
+        <div class="inst-row">
+          <!-- UK GDS -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#0b0c0c;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#0b0c0c"/><text x="14" y="12" font-family="DM Mono,monospace" font-size="6" fill="#fff" text-anchor="middle" font-weight="700">GDS</text><text x="14" y="20" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">UK Government</text><text x="14" y="25" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">Digital Service</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>UK Gov. Digital Service</h5>
+              <p>Pioneered the hub-and-spoke model for UK public sector digital. GDS sets standards and shared platforms; departments are autonomous delivery spokes.</p>
+            </div>
+            <div class="inst-badge ib-glob">Global</div>
+          </div>
+          <!-- UAE TDRA -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#003366;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#003366"/><text x="14" y="12" font-family="DM Mono,monospace" font-size="5.5" fill="#4db8ff" text-anchor="middle" font-weight="700">TDRA</text><text x="14" y="20" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">UAE Telecom</text><text x="14" y="25" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">&amp; Digital Reg.</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>UAE TDRA</h5>
+              <p>Runs a federated digital governance model across UAE ministries. Central AI policy and data infrastructure hub with federated ministry delivery teams.</p>
+            </div>
+            <div class="inst-badge ib-glob">Global</div>
+          </div>
+          <!-- Singapore GovTech -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#1d3557;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#1d3557"/><text x="14" y="11" font-family="DM Mono,monospace" font-size="4.5" fill="#a8dadc" text-anchor="middle" font-weight="700">GOVTECH</text><text x="14" y="19" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">Singapore</text><text x="14" y="25" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.45)" text-anchor="middle">GovTech</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>Singapore GovTech</h5>
+              <p>Operates Singapore's Smart Nation platform as a central AI &amp; data hub. Agencies are federated spokes — empowered to innovate using GovTech's shared stack.</p>
+            </div>
+            <div class="inst-badge ib-glob">Global</div>
+          </div>
+          <!-- OECD -->
+          <div class="inst-card">
+            <div class="logo-svg-box" style="background:#003189;">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="3" fill="#003189"/><text x="14" y="12" font-family="DM Mono,monospace" font-size="6.5" fill="#fff" text-anchor="middle" font-weight="700">OECD</text><text x="14" y="20" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.5)" text-anchor="middle">Digital Gov.</text><text x="14" y="25" font-family="DM Mono,monospace" font-size="3.8" fill="rgba(255,255,255,.45)" text-anchor="middle">Framework</text></svg>
+            </div>
+            <div class="inst-info">
+              <h5>OECD Digital Gov. Framework</h5>
+              <p>Recommends federated hub-and-spoke as the gold standard for national digital governance. Defines roles, accountability boundaries, and shared service obligations.</p>
+            </div>
+            <div class="inst-badge ib-glob">Global</div>
+          </div>
         </div>
       </div>
       <div class="slide-num">03 / 06</div>
@@ -717,43 +676,43 @@
       <div class="corner-mark"></div>
       <div class="corner-mark-br"></div>
       <div class="slide-header">
-        <div class="slide-title">Roles &amp; Responsibilities:<br><span>BI Center vs. AI Unit</span></div>
+        <div class="slide-title">Roles &amp; Responsibilities:<br><span>Hub vs. Domain Spokes</span></div>
       </div>
       <div class="divider"></div>
       <div class="columns">
         <div class="col-bi">
           <div class="col-header col-header-bi">
-            <span class="col-header-text">BI &amp; Data Analytics Center</span>
+            <span class="col-header-text">Hub — Digital Transformation &amp; BI Center</span>
           </div>
           <div class="role-item"><span class="dot dot-bi"></span><div><strong>Data Foundation &amp; Quality</strong>Data pipelines, master data management, data quality standards, data catalog ownership</div></div>
           <div class="role-item"><span class="dot dot-bi"></span><div><strong>Descriptive &amp; Diagnostic Analytics</strong>Dashboards, KPI reporting, trend analysis, operational BI across all entities</div></div>
-          <div class="role-item"><span class="dot dot-bi"></span><div><strong>Advanced Analytics</strong>Predictive models, statistical analysis, forecasting — domain-specific models built on clean data</div></div>
-          <div class="role-item"><span class="dot dot-bi"></span><div><strong>Decision Support Systems</strong>Decision intelligence products, executive dashboards, scenario modelling for policy decisions</div></div>
-          <div class="role-item"><span class="dot dot-bi"></span><div><strong>AI Model Development (Data Layer)</strong>Develops ML/AI models grounded in data pipelines; consumes AI platforms provisioned by AI Unit</div></div>
+          <div class="role-item"><span class="dot dot-bi"></span><div><strong>Advanced Analytics &amp; Forecasting</strong>Predictive models, statistical analysis — domain-specific models built on clean, governed data</div></div>
+          <div class="role-item"><span class="dot dot-bi"></span><div><strong>Decision Support Systems</strong>Executive dashboards, scenario modelling, intelligence products for policy decisions</div></div>
+          <div class="role-item"><span class="dot dot-bi"></span><div><strong>AI Enablement to Spokes</strong>Provides AI tooling, shared models, and MLOps platforms as a service to all domain units</div></div>
         </div>
         <div class="mid-col">
           <div class="mid-line"></div>
-          <div class="mid-badge">Interface</div>
+          <div class="mid-badge">Feeds</div>
           <div class="mid-line"></div>
         </div>
         <div class="col-ai">
           <div class="col-header col-header-ai">
-            <span class="col-header-text">AI Unit · Digital Transformation</span>
+            <span class="col-header-text">Domain Spokes — Business Units</span>
           </div>
-          <div class="role-item"><span class="dot dot-ai"></span><div><strong>AI Strategy &amp; Governance</strong>National/entity AI strategy alignment, AI governance frameworks, policy development, ethical AI oversight</div></div>
-          <div class="role-item"><span class="dot dot-ai"></span><div><strong>AI Platforms &amp; Infrastructure</strong>MLOps/LLMOps platforms, AI model registry, GPU/cloud AI infrastructure, shared model APIs</div></div>
-          <div class="role-item"><span class="dot dot-ai"></span><div><strong>Responsible AI &amp; Policy</strong>Fairness, explainability, bias auditing, AI risk assessment, compliance with local &amp; international standards</div></div>
-          <div class="role-item"><span class="dot dot-ai"></span><div><strong>AI Capability Building</strong>AI literacy programs, upskilling, AI community of practice, vendor management for AI tools</div></div>
-          <div class="role-item"><span class="dot dot-ai"></span><div><strong>AI Enablement &amp; Use Case Portfolio</strong>Curates and prioritizes AI use cases across the organization; enables — does not solely deliver — solutions</div></div>
+          <div class="role-item"><span class="dot dot-ai"></span><div><strong>Local Data &amp; Use Case Ownership</strong>Each unit owns its domain data, defines local AI use cases, and feeds them to the Hub for enablement</div></div>
+          <div class="role-item"><span class="dot dot-ai"></span><div><strong>Domain-Specific Delivery</strong>Deliver analytics products, operational BI, and AI-augmented workflows tailored to their function</div></div>
+          <div class="role-item"><span class="dot dot-ai"></span><div><strong>Adherence to Hub Standards</strong>Apply AI governance policies, responsible AI guidelines, and data quality standards set by the Hub</div></div>
+          <div class="role-item"><span class="dot dot-ai"></span><div><strong>Insights Back to Hub</strong>Feed domain-level insights, model performance data, and local learnings back to the central Hub</div></div>
+          <div class="role-item"><span class="dot dot-ai"></span><div><strong>Collaborative Innovation</strong>Propose new AI use cases and pilots; the Hub evaluates, platforms, and scales successful models</div></div>
         </div>
       </div>
       <div class="shared-strip">
-        <span class="shared-strip-label">Shared Zone ↔</span>
-        <span class="shared-item">Joint AI Use Case Review</span>
-        <span class="shared-item">Model Governance Committees</span>
-        <span class="shared-item">Data &amp; AI Product Squads</span>
+        <span class="shared-strip-label">Shared Zone</span>
+        <span class="shared-item">Joint AI Use Case Prioritization</span>
+        <span class="shared-item">Model Governance &amp; Review</span>
+        <span class="shared-item">Cross-Unit Data Squads</span>
         <span class="shared-item">Innovation Pilots</span>
-        <span class="shared-item">Reporting to Leadership</span>
+        <span class="shared-item">Leadership Reporting</span>
       </div>
       <div class="slide-num">04 / 06</div>
     </section>
@@ -763,7 +722,7 @@
       <div class="corner-mark"></div>
       <div class="corner-mark-br"></div>
       <div class="slide-header">
-        <div class="slide-title">Domain-Based <span>Role Split</span></div>
+        <div class="slide-title">Domain-Based <span>Responsibility Split</span></div>
         <div class="tag-box">Slide 05</div>
       </div>
       <div class="divider"></div>
@@ -772,8 +731,8 @@
           <thead>
             <tr>
               <th class="th-domain">Domain</th>
-              <th class="th-bi">BI &amp; Data Analytics Center</th>
-              <th class="th-ai">AI Unit · Digital Transformation</th>
+              <th class="th-bi">Hub — Digital Transformation &amp; BI</th>
+              <th class="th-ai">Domain Spokes — Business Units</th>
               <th class="th-shared">Interface</th>
             </tr>
           </thead>
@@ -781,111 +740,125 @@
             <tr>
               <td class="td-domain">Data Foundation</td>
               <td class="td-bi"><span class="domain-badge badge-bi">Lead</span><br>Data ingestion, quality, lineage, master data, catalog</td>
-              <td class="td-ai">Defines AI data requirements &amp; quality standards for AI readiness</td>
-              <td class="td-shared">AI readiness assessments</td>
+              <td class="td-ai">Submit domain data; flag quality issues; apply data standards</td>
+              <td class="td-shared">Data quality reviews</td>
             </tr>
             <tr>
               <td class="td-domain">Analytics &amp; BI</td>
-              <td class="td-bi"><span class="domain-badge badge-bi">Lead</span><br>Dashboards, KPIs, reporting, advanced analytics, forecasting</td>
-              <td class="td-ai">Provides AI-enhanced analytics capabilities (NLP, vision, GenAI)</td>
-              <td class="td-shared">AI-augmented BI products</td>
+              <td class="td-bi"><span class="domain-badge badge-bi">Enable</span><br>Shared BI platforms, KPI frameworks, reporting standards</td>
+              <td class="td-ai"><span class="domain-badge badge-ai">Deliver</span><br>Domain dashboards, operational reports, local KPIs</td>
+              <td class="td-shared">Shared BI platforms</td>
             </tr>
             <tr>
-              <td class="td-domain">AI Model Dev.</td>
-              <td class="td-bi"><span class="domain-badge badge-bi">Deliver</span><br>Builds domain-specific ML models using BI data assets</td>
-              <td class="td-ai"><span class="domain-badge badge-ai">Enable</span><br>Provides platforms, MLOps tooling, model registry, standards</td>
-              <td class="td-shared">Joint model review board</td>
+              <td class="td-domain">AI Development</td>
+              <td class="td-bi"><span class="domain-badge badge-bi">Enable</span><br>MLOps platforms, model registry, shared AI APIs, tooling</td>
+              <td class="td-ai"><span class="domain-badge badge-ai">Use &amp; Propose</span><br>Consume AI tools; submit domain use cases for Hub development</td>
+              <td class="td-shared">Use case board</td>
             </tr>
             <tr>
               <td class="td-domain">AI Governance</td>
-              <td class="td-bi">Adheres to AI governance policies; documents data lineage for audits</td>
-              <td class="td-ai"><span class="domain-badge badge-ai">Lead</span><br>Responsible AI policies, ethics, bias review, compliance oversight</td>
+              <td class="td-bi"><span class="domain-badge badge-bi">Lead</span><br>Responsible AI policy, ethics, bias review, compliance oversight</td>
+              <td class="td-ai">Adhere to AI policies; document domain-level model usage and risk</td>
               <td class="td-shared">Model audit sign-offs</td>
             </tr>
             <tr>
               <td class="td-domain">Platforms &amp; Infra</td>
-              <td class="td-bi">Operates BI platforms (data warehouse, visualization tools)</td>
-              <td class="td-ai"><span class="domain-badge badge-ai">Lead</span><br>AI/ML platforms, LLM APIs, cloud AI services, GPU resources</td>
-              <td class="td-shared">Shared platform services</td>
+              <td class="td-bi"><span class="domain-badge badge-bi">Lead</span><br>All shared platforms: data warehouse, AI/ML stack, visualization</td>
+              <td class="td-ai">Consume shared services; raise platform requirements to Hub</td>
+              <td class="td-shared">Service-level agreements</td>
             </tr>
             <tr>
               <td class="td-domain">Capability Building</td>
-              <td class="td-bi">Data literacy, analytics upskilling, BI tool training</td>
-              <td class="td-ai"><span class="domain-badge badge-ai">Lead</span><br>AI literacy, prompt engineering, responsible AI training</td>
-              <td class="td-shared">Joint learning programs</td>
+              <td class="td-bi"><span class="domain-badge badge-bi">Lead</span><br>AI &amp; data literacy programs, training, community of practice</td>
+              <td class="td-ai">Participate in programs; develop domain-specific expertise on top</td>
+              <td class="td-shared">Joint learning tracks</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-bi)"></div>BI Center leads</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-ai)"></div>AI Unit leads</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Shared / Interface</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-bi)"></div>Hub leads / enables</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-ai)"></div>Spoke delivers / consumes</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Shared interface</div>
       </div>
       <div class="slide-num">05 / 06</div>
     </section>
 
-    <!-- ══ SLIDE 6 – Operating Model ══ -->
+    <!-- ══ SLIDE 6 – Visual Operating Model ══ -->
     <section class="slide" id="s6">
       <div class="slide-header">
-        <div class="slide-title">Visual <span>Operating Model</span>:<br>How They Work Together</div>
+        <div class="slide-title">Visual <span>Operating Model</span>:<br>Hub Enabling All Spokes</div>
       </div>
       <div class="divider"></div>
       <div class="om-wrap">
-        <div class="layer-label">▸ Core Units</div>
+        <div class="layer-label">Central Hub</div>
         <div class="units-row">
-          <div class="unit-box ub-bi">
-            <h4>📊 BI &amp; Data Analytics Center</h4>
-            <ul>
-              <li>Data assets &amp; pipelines</li>
-              <li>Analytics &amp; dashboards</li>
-              <li>ML model development</li>
-              <li>Decision support systems</li>
-            </ul>
-          </div>
-          <div class="bridge-col">
-            <div class="mid-line" style="background:linear-gradient(180deg,transparent,rgba(26,168,150,.5),transparent);width:1px;flex:1"></div>
-            <div class="bridge-arrow">⇄</div>
-            <div class="bridge-label">APIs<br>&amp;<br>Data</div>
-            <div class="mid-line" style="background:linear-gradient(180deg,transparent,rgba(26,168,150,.5),transparent);width:1px;flex:1"></div>
-          </div>
-          <div class="unit-box ub-ai">
-            <h4>🤖 AI Unit · Digital Transformation</h4>
-            <ul>
-              <li>AI platforms &amp; MLOps</li>
-              <li>Responsible AI &amp; governance</li>
-              <li>Capability building</li>
-              <li>AI strategy &amp; policy</li>
-            </ul>
-          </div>
-        </div>
-        <div class="layer-label">▸ Collaboration Interfaces</div>
-        <div class="collab-row">
-          <div class="collab-box">
-            <div class="cb-icon">🔬</div>
-            <h5>Joint AI Use Case Board</h5>
-            <p>Co-prioritize, scope, and review AI initiatives. BI brings data; AI Unit brings platforms &amp; governance.</p>
-          </div>
-          <div class="collab-box">
-            <div class="cb-icon">🛡️</div>
-            <h5>Model Review &amp; Audit</h5>
-            <p>BI develops models; AI Unit reviews for compliance, bias, and explainability before deployment.</p>
-          </div>
-          <div class="collab-box">
-            <div class="cb-icon">🚀</div>
-            <h5>Shared Product Squads</h5>
-            <p>Cross-functional teams for high-priority AI products — data engineers, AI engineers, analysts together.</p>
+          <div class="unit-box ub-bi" style="grid-column:1/4; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; padding:10px 14px;">
+            <div>
+              <div style="font-size:8px;font-weight:600;color:#7ec8e3;text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;">Digital Transformation</div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:2px;">
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#7ec8e3;font-weight:700;">›</span>AI strategy &amp; policy</li>
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#7ec8e3;font-weight:700;">›</span>MLOps &amp; AI platforms</li>
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#7ec8e3;font-weight:700;">›</span>Responsible AI governance</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:8px;font-weight:600;color:#7ec8e3;text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;">BI &amp; Data Center</div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:2px;">
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#7ec8e3;font-weight:700;">›</span>Data assets &amp; pipelines</li>
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#7ec8e3;font-weight:700;">›</span>Shared analytics &amp; BI</li>
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#7ec8e3;font-weight:700;">›</span>Decision support systems</li>
+              </ul>
+            </div>
+            <div>
+              <div style="font-size:8px;font-weight:600;color:#e8c06a;text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px;">Governance Layer</div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:2px;">
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#e8c06a;font-weight:700;">›</span>Steering committee</li>
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#e8c06a;font-weight:700;">›</span>Joint KPIs &amp; OKRs</li>
+                <li style="font-size:8.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;"><span style="color:#e8c06a;font-weight:700;">›</span>Data &amp; AI ethics board</li>
+              </ul>
+            </div>
           </div>
         </div>
-        <div class="layer-label">▸ Unified Governance Layer</div>
+        <div class="layer-label">Spoke Domains — Served by Hub</div>
+        <div class="collab-row" style="grid-template-columns:repeat(5,1fr);">
+          <div class="collab-box">
+            <h5>Finance Unit</h5>
+            <p>Consumes Hub BI stack; delivers financial analytics &amp; forecasting locally</p>
+          </div>
+          <div class="collab-box">
+            <h5>HR Unit</h5>
+            <p>Uses Hub AI tools for workforce analytics; feeds people data upstream</p>
+          </div>
+          <div class="collab-box">
+            <h5>Policy Unit</h5>
+            <p>Accesses shared data catalog; delivers evidence-based policy intelligence</p>
+          </div>
+          <div class="collab-box">
+            <h5>Operations</h5>
+            <p>Consumes AI models for process optimisation; reports outcomes to Hub</p>
+          </div>
+          <div class="collab-box">
+            <h5>IT &amp; Infra</h5>
+            <p>Extends Hub platforms locally; ensures technical compliance with Hub standards</p>
+          </div>
+        </div>
+        <div class="layer-label">Flow of Value</div>
         <div class="gov-row">
-          <div class="gr-label">🏛️ Shared Governance &amp; Leadership Reporting</div>
+          <div class="gr-label">Hub to Spokes</div>
           <div class="gr-items">
-            <span class="gr-item">CDO / Chief Data Officer</span>
-            <span class="gr-item">Data &amp; AI Steering Committee</span>
-            <span class="gr-item">Responsible AI Council</span>
-            <span class="gr-item">Digital Transformation Leadership</span>
-            <span class="gr-item">Joint KPIs &amp; OKRs</span>
+            <span class="gr-item">AI Platforms &amp; APIs</span>
+            <span class="gr-item">Data Standards &amp; Policies</span>
+            <span class="gr-item">Shared BI Stack</span>
+            <span class="gr-item">Training &amp; Upskilling</span>
+          </div>
+          <div style="width:1px;height:18px;background:rgba(255,255,255,.1);flex-shrink:0;"></div>
+          <div class="gr-label" style="color:var(--teal-light);">Spokes to Hub</div>
+          <div class="gr-items">
+            <span class="gr-item" style="color:rgba(255,255,255,.4);">Domain Data</span>
+            <span class="gr-item" style="color:rgba(255,255,255,.4);">Use Cases &amp; Requirements</span>
+            <span class="gr-item" style="color:rgba(255,255,255,.4);">Local Insights</span>
+            <span class="gr-item" style="color:rgba(255,255,255,.4);">Model Performance</span>
           </div>
         </div>
       </div>
@@ -896,36 +869,37 @@
 </div><!-- #deck-shell -->
 
 <div id="nav">
-  <button class="nav-btn" id="prevBtn" disabled onclick="navigate(-1)">← Prev</button>
+  <button class="nav-btn" id="prevBtn" disabled onclick="navigate(-1)">Prev</button>
   <div class="nav-dots" id="dots"></div>
-  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next →</button>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next</button>
 </div>
-<div id="hint">Press ← → arrow keys to navigate</div>
+<div id="hint">Press arrow keys to navigate</div>
 
 <script>
-  /* ── Scaling: always fit the 960×540 deck to the viewport ── */
   const DECK_W = 960, DECK_H = 540;
-  const deck = document.getElementById('deck');
+  const deck  = document.getElementById('deck');
   const shell = document.getElementById('deck-shell');
 
   function scaleDeck() {
     const vw = window.innerWidth;
-    const vh = window.innerHeight - 80; // leave room for nav
-    const scale = Math.min(vw / DECK_W, vh / DECK_H, 1);
+    const vh = window.innerHeight - 60;
+    const scale = Math.min(vw / DECK_W, vh / DECK_H);
     deck.style.transform = `scale(${scale})`;
     deck.style.transformOrigin = 'top left';
-    shell.style.width  = (DECK_W * scale) + 'px';
-    shell.style.height = (DECK_H * scale) + 'px';
+    const sw = DECK_W * scale;
+    const sh = DECK_H * scale;
+    shell.style.width  = sw + 'px';
+    shell.style.height = sh + 'px';
+    // Center shell horizontally
+    shell.style.marginLeft = Math.max(0, (vw - sw) / 2) + 'px';
   }
 
   scaleDeck();
   window.addEventListener('resize', scaleDeck);
 
-  /* ── Slide navigation ── */
   const slides = Array.from(document.querySelectorAll('.slide'));
   const dotsContainer = document.getElementById('dots');
-  let current = 0;
-  let isAnimating = false;
+  let current = 0, isAnimating = false;
 
   slides.forEach((_, i) => {
     const d = document.createElement('div');
@@ -943,9 +917,7 @@
       slides[current].classList.remove('exit');
       current = idx;
       slides[current].classList.add('active');
-      document.querySelectorAll('.nav-dot').forEach((d, i) => {
-        d.classList.toggle('active', i === current);
-      });
+      document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === current));
       document.getElementById('prevBtn').disabled = current === 0;
       document.getElementById('nextBtn').disabled = current === slides.length - 1;
       setTimeout(() => { isAnimating = false; }, 600);
